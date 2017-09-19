@@ -337,7 +337,7 @@ static void terminal_at_xy_relative(vt100_t *t, int x, int y, bool limit_not_wra
 	assert(t);
 	int x_current = terminal_x_current(t);
 	int y_current = terminal_y_current(t);
-	terminal_at_xy(t, x_current + x, y_current + y, limit_not_wrap);
+	terminal_at_xy(t, MAX(x_current + x, 0), MAX(y_current + y, 0), limit_not_wrap);
 }
 
 static void terminal_parse_attribute(vt100_attribute_t *a, unsigned v)
@@ -543,14 +543,15 @@ void vt100_update(vt100_t *t, uint8_t c)
 			t->cursor += 8;
 			t->cursor &= ~0x7;
 			break;
+		case '\r':
 		case '\n':
 			t->cursor += t->width;
 			t->cursor = (t->cursor / t->width) * t->width;
 			break;
-		case '\r':
-			break;
+		case DELETE:
 		case BACKSPACE:
 			terminal_at_xy_relative(t, -1, 0, true);
+			t->m[t->cursor] = ' ';
 			break;
 		default:
 			assert(t->cursor < t->size);
@@ -1271,8 +1272,6 @@ static void draw_scene(void)
 		exit(EXIT_SUCCESS);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	draw_regular_polygon_line(X_MAX/2, Y_MAX/2, PI/4, sqrt(Y_MAX*Y_MAX/2)*0.99, SQUARE, LINE_WIDTH, WHITE);
 
 	if(next != world.tick) {
 		next = world.tick;

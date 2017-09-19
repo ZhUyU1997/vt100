@@ -25,6 +25,13 @@ This project is not meant to be:
 It requires [GLUT][], [OpenGL][], and a [C99][] compiler. Type 'make' to build an
 executable called 'vt100'.
 
+## To Do
+
+* fork/exec
+* redirect I/O
+* catch and pass along signals (CTRL+C)
+* implement scrolling
+
 [GLUT]: https://en.wikipedia.org/wiki/FreeGLUT
 [C99]: https://gcc.gnu.org/
 [OpenGL]: https://www.opengl.org/
